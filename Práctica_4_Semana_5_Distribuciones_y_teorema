@@ -1,0 +1,277 @@
+#Práctica_4: "Semana_5_Distribuiciones_&_Teorema"
+
+#En biología siempre queremos saber la probabilidad de que cierto evento ocurra. En R existen funciones, ya preestablecidas, que permiten calcular las probabilidades de diferentes eventos ya sea continuo o discreto. Estas funciones son llamadas funciones de probabilidad (discreto) o funciones de densidad (caso continuo.)
+
+#Las funciones que comienzan con la letra *d* le permitirán obtener la probabilidad puntual de un evento, las que comienzan con *p* le permitirán obtener la función de probabilidad o probabilidad acumulada hasta ese punto y las que comienzan con *q* le permitirán obtener los cuantiles. Los fenómenos biológicos pueden ser modelados bajo alguna distribución específica.
+
+help(distributions)
+
+help("dexp")
+
+#Imaginemos que queremos saber si la probabilidad de que un grupo de individuos de una generación tengan un genotipo específico. Recordemos qué *genotipo* es la información genética de un individuo.
+
+#Ese genotipo puede ser de dos tipos *Homocigoto* o *Heterocigoto*
+  
+#Sabemos que la probabilidad de obtener individuos de cierto genotipo dependerá de los genotipos de los padres. Por ejemplo, el cruce entre dos heterocigotos, producirá 0.5 de Bb, 0.25 de bb y 0.25 de BB, en términos del genotipo. El fenotipo (caraterísticas observables), 0.75 serán moradas y 0.25 serán blancas, para el caso de las flores.
+
+#Si consideramos que cada evento es independiente, podremos hacer preguntas con respecto a la descendencia de estos dos padres.
+
+## Distribución binomial: Eventos
+
+#Consideremos un macho heterocigoto y una hembra heterocigota, que se cruzan y tienen 8 hijos. ¿Cuál es la probabilidad de que 5 hijos sean de genotipo bb? 
+  
+# En este punto debemos preguntarnos:
+# ¿Cuál es el factor de éxito? : Ser bb
+#¿Cúal es el fracaso? No ser bb
+#¿Cuál es la probabilidad de ser bb en este cruce? 0.25 # la probabilidad de tener éxito
+#¿Cúantos hijos totales? 8
+#¿Por cuantos hijos pregunto? 5
+
+# Cúal es la probabilidad de que 5 individual sean bb
+
+dbinom(5, size = 8, prob =0.25)
+
+dbinom(0:8, size = 8, prob =0.25)
+
+plot(0:8,dbinom(0:8, size = 8, prob =0.25))
+
+# ¿Cúal es la probabilidad de que 5 o menos  sean bb?
+
+pbinom(5, size = 8, prob =0.25)
+
+# ¿Cúal es la probabilidad de que más de 5  sean bb
+
+1 - pbinom(5, size = 8, prob =0.25)
+
+pbinom(5, size = 8, prob =0.25,lower.tail=FALSE)
+
+# ¿Cúal es el percentíl 90?
+
+qbinom(0.9, 8, 0.25)
+
+#Ejercicio: ¿Cúal es la probabilidad de que 3 sean de fenotipo blanco?
+
+dbinom(3,size=8,prob=0.25)
+#[1] 0.2076416
+
+## Distribución de Poison
+
+#Nos permite modelar fenómenos biológicos de ocurrencias rara, el calculo se hace a través del tiempo o el espacio. Por ejemplo, la probabilidad de una mutación en un cultivo de células, la probabilidad de extinción en un tiempo dado.
+
+#Por ejemplo, en un terreno de 10 m2 se divide en cuadrículas o bloques de 1 cm2. Se esparcen semilla (en términos de miles) y el promedio de semillas en cada cuadrícula es de 1.5.
+
+#Note que preguntamos por el número de éxitos!!.
+
+# Cúal de que en un bloque hayan 2 semillas
+
+dpois(x = 2,lambda = 1.5)
+
+plot(dpois(x = 0:20,lambda = 1.5))
+
+# ¿Cúal es la probabilidad de encontrar 5 o menos semillas en un bloque?
+
+ppois(q = 5 ,lambda = 1.5)
+
+# ¿Cúal es la probabilidad de encontrar 8 o más semillas en un bloque?
+1 - ppois(8, lambda = 1.5)
+
+
+# ¿Cúal es el percentíl 90?
+
+qpois(0.6,1.5)
+
+#Ejercicio: ¿Cúal es la probabilidad de encontrar 6 semillas por bloque?, si el terreno es más pequeño (2x2m) y el promedio de semillas por bloque es de 10. Grafique todos los eventos de 0 a 50
+
+dpois(x=6,lambda=10)
+
+plot(dpois(x=0:50,lambda=10),ylab="Probabilidad",xlab="Eventos", col=("blue"), main="probabilidad de encontrar 6 semillas por bloque")
+
+## Variables aleatorias o distribuciones continuas
+
+#No todos los fenómenos biológicos pueden ser modelados bajo distribución normal, sin embargo un ejercicio fundamental para hacer un análisis, es mirar si las variable siguen o pueden ser modeladas o aproximadas bajo una distribución normal; esto no quiere decir que realmente sean normales
+
+#Por ahora, solo veremos cómo calcular probabilidades bajo esta distribución.
+
+#Supongamos un muestreo de alturas de mujeres en Colombia:
+
+# Muestra
+x<-abs(rnorm(30, 165, 4))
+x
+#Cúal es la probailidad de encontrar mujeres con alturas menores a 160cm
+
+pnorm(160, 165, 4)
+
+#Cúal es la probailidad de encontrar mujeres con alturas mayores a 170cm
+
+pnorm(170, 165, 4,lower.tail = FALSE)
+
+#Cúal es la probailidad de encontrar mujeres con alturas mayores a 160cm
+
+pnorm(160, 165, 4,lower.tail = FALSE)
+
+
+#Cúal es la probailidad de encontrar mujeres con alturas entre 150cm y 170cm
+
+pnorm(170, 165, 4) - pnorm(150, 165, 4)
+
+
+#Cúal es la probailidad de encontrar mujeres con alturas entre 170cm y 190cm
+
+pnorm(190, 165, 4) - pnorm(170, 165, 4)
+
+
+#Graficar
+
+curve(dnorm(x, 165, 4), 145, 200, main = "Alturas de mujeres colombianas")
+
+library(ade4)
+
+data("carniherbi49")
+
+head(carniherbi49$tab2)
+
+# Carnivoros
+
+pesos <- carniherbi49$tab2$bodymass[which(carniherbi49$tab2$clade== 'Carnivore')]
+
+meanC <- mean(carniherbi49$tab2$bodymass[which(carniherbi49$tab2$clade== 'Carnivore')])
+
+sdC <-sd(carniherbi49$tab2$bodymass[which(carniherbi49$tab2$clade== 'Carnivore')])
+
+pnorm(1.5, meanC, sdC)
+
+hist(pesos)
+
+# Herbivore
+
+pesosH <- carniherbi49$tab2$bodymass[which(carniherbi49$tab2$clade== 'Herbivore')]
+
+meanH <- mean(pesosH)
+
+sdH <-sd(pesosH)
+
+pnorm(1.5, meanH, sdH)
+
+hist(pesosH)
+
+#Realmente, ¿Estas variables parecen Normales?** Hay que tener cuidado!! la mayoría de variables biológicas no son normales, para poderlas aproximar hay que transformarlas o simplemente usar estadísticos que no supongan normalidad.
+
+#Ejercicio: A partir del tortues del paquete ade4, calcule el promedio y la desviación estándar de las alturas de caparazones de las tortugas. Haga el análisis por sexo y grafíquelo.
+
+data("tortues" )
+
+View(tortues)
+
+aggregate(tortues$larg,by=list(tortues$sexe),FUN=mean)
+
+#  Group.1         x
+#1       M  88.29167
+#2       F 102.70833
+
+aggregate(tortues$larg,by=list(tortues$sexe),FUN=sd)
+
+#Group.1         x
+#1       M  7.074013
+#2       F 13.113150
+
+media<-tapply(tortues$larg,tortues$sexe,FUN=mean)
+media
+
+#M         F 
+#88.29167 102.70833
+
+#plot media
+plot(media,col=c("red","green" ))
+
+
+desv<-tapply(tortues$larg,tortues$sexe,FUN=sd)
+
+#plot Sd
+plot(desv,col=c("pink","brown"))
+
+#Existen otro tipo de distribuciones que pueden modelar fenómenos biológicos cómo uniforme, gamma, log-normal. Uno de los más usados en campos como ecología son los modelos de crecimiento poblacional.
+
+#Ejercicio: Lea el artículo sobre tipos de [crecimientos poblacionales][1] y escriba el código en R que mejor describa el ejemplo de las bacterias en crecimiento exponencial.
+
+crecimiento_expo<-c(1,3,9,27,81)
+tiempo<-0:4
+plot(tiempo,crecimiento_expo, col=c("pink","green","red","yellow","cyan"), main="Reproducción bacteriana")
+
+## Muestreo
+#Cuando se muestrea aleatoriamente, se busca que esa porción de la población sea extrapolable a los parámetros poblacionales. Generalmente en biología usamos muestreos probabilisticos.
+
+#*Sample* es la función más simple en R que permite realizar muestreos. Sin embargo existen paquetes dedicados a este fin, como por ejemplo *sampling*
+
+data(iris)
+
+# muestreo aleatorio simple sin repetición
+
+sin <- sample( 1:nrow( iris ), 55 )
+muestra <- iris[sin , ]
+
+# muestreo aleatorio simple sin repetición
+
+con <- sample( 1:nrow( iris ), 60, replace = TRUE )
+
+# Muestreo estratificado
+
+library( sampling )
+
+# muestreo estratificado sin repetición
+
+estratos <- strata( iris, stratanames = c("Species"), size = c(20,20,20), method = "srswor" )
+
+muestreo <- getdata( iris, estratos )
+
+# muestreo estratificado sin repetición
+
+estratos <- strata( iris, stratanames = c("Species"), size = c(20,20,20), method = "srswr" )
+
+muestreo <- getdata( iris, estratos )
+
+#El muestreo sistemático consta de 4 pasos:
+  
+#1: Ordenar mi lista de individuos (N)
+#2: Definir el tamaño de la muestra (n)
+#3: Dividir N/n eso me dará el intervalo de muestreo (K)
+#4: Obtenemos un número aleatorio desde 1 hasta k (1er)
+#5: Iniciamos en 1er y tomamos cada k hasta completar n
+
+#Ejercicio: Simule 5000 peces de criadero en un tanque, todos son de la misma cohorte. Imagine que los organiza en fila y quiere seleccionar 100 para calcular estadísticos de la población. Haga un muestreo sistemático y calcule los estadísticos y descriptivos vistos anteriormente. Grafique.
+
+n<-c(1:5000)
+n
+
+long<-rnorm(n=5000,mean=5,sd=1)
+long
+
+t<-data.frame(cbind(n,long))
+t
+
+# k= 50 (5000/100)...
+
+cons<-1:50
+cons
+
+tod<-sample(cons,1)
+tod
+
+muestra<-table[muestreo,]
+muestra
+
+mean(muestra$longitud)
+
+median(muestra$longitud)
+
+moda<-function(n){x <- tabla ( n )
+moda1<-x[which.max( x )]
+return ( moda )
+}
+
+moda(muestra$longitud)
+
+sd(muestra$longitud)
+
+var(muestra$longitud)
+
+hist(muestra$longitud,freq=F,xlab="Longitud (mm)",col=arcoiris(18),main=" Longitud peces")
