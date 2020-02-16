@@ -1,0 +1,154 @@
+#* Ejercicio: * Tome cualquiera de las dos poblaciones y cambie los valores de tamaño y número de muestras hasta que obtenga un histograma similar a una distribución normal:
+
+# ¿Cuán grande es la muestra?
+
+taman.muestra <-40
+
+# ¿Cuántas muestras / poblaciones?
+
+Numemuestras <-85
+
+# matriz de todas las muestras tomadas de la población 2#
+
+Matriz.Muestras.pob1.sinMean <- matriz (NA, nrow = Numemuestras, ncol = taman.muestra)
+
+para (i en 1: Numemuestras) {
+  muestra <- runif (taman.muestra)
+  Matriz.Muestras.pob1.sinMean [i,] = muestra
+}
+
+#matriz sin media
+
+Matriz.Muestras.pob1.sinMean
+
+# Calculo de la media
+
+meansX <- apply (Matriz.Muestras.pob1.sinMean, 2, mean)
+
+significa X
+
+# se adiciona a la tabla
+
+Matriz.Muestras.pob1.conMean <- cbind (Matriz.Muestras.pob1.sinMean, meansX)
+
+Matriz.Muestras.pob1.conMean
+
+# Histograma de las medias
+
+par (mfrow = c (2,2))
+hist (Matriz.Muestras.pob1.sinMean [1,], main = 'muestra 1')
+hist (Matriz.Muestras.pob1.sinMean [2,], main = 'muestra 2')
+hist (Matriz.Muestras.pob1.sinMean [3,], main = 'muestra 3')
+hist (Matriz.Muestras.pob1.conMean [, taman.muestra + 1], main = 'medias')
+
+?distribucion
+
+# se encuentra que para simular una población con distribución normal debemos usar la funciòn rnorm## 
+
+# Cuán grande es la muestra?
+
+taman.muestra <-30 
+
+# Cuántas muestras / poblaciones
+
+Numemuestras <- 45
+
+# Se genera una matriz donde se colocará todas las muestras tomadas de la población 2
+
+Matriz.Muestras.pob1.sinMean <- matriz (NA, nrow = Numemuestras, ncol = taman.muestra)
+
+para (i en 1: Nmuestras) {
+  muestra <- rnorm (taman.muestra, 15, 1)
+  Matriz.Muestras.pob1.sinMean [i,] = muestra
+}
+
+#matriz sin media
+
+Matriz.Muestras.pob1.sinMean
+
+# Calculo la media
+meansX <- apply (Matriz.Muestras.pob1.sinMean, 2, mean)
+
+significa X
+
+#se adiciona a la tabla##
+
+Matriz.Muestras.pob1.conMean <- cbind (Matriz.Muestras.pob1.sinMean, meansX)
+
+Matriz.Muestras.pob1.conMean
+
+# Histograma de las medias
+
+par (mfrow = c (2,2))
+hist (Matriz.Muestras.pob1.sinMean [1,], main = 'muestra 1')
+hist (Matriz.Muestras.pob1.sinMean [2,], main = 'muestra 2')
+hist (Matriz.Muestras.pob1.sinMean [3,], main = 'muestra 3')
+hist (Matriz.Muestras.pob1.conMean [, taman.muestra + 1], main = 'medias')
+
+# Cuán grande es la muestra?#
+
+taman.muestra <-45
+
+# Cuántas muestras / poblaciones?#
+
+Numemuestras <- 90
+
+# se genera una matriz donde se colocará todas las muestras tomadas de la población 2
+
+Matriz.Muestras.pob1.sinMean <- matriz (NA, nrow = Numemuestras, ncol = taman.muestra)
+
+para (i en 1: Numemuestras) {
+  muestra <- rlnorm (taman.muestra, 15, 0.5)
+  Matriz.Muestras.pob1.sinMean [i,] = muestra
+}
+
+# Venta la matriz sin media
+
+Matriz.Muestras.pob1.sinMean
+
+# Calculo media
+meansX <- apply (Matriz.Muestras.pob1.sinMean, 2, mean)
+
+significa X
+
+# La adiciono a la tabla
+
+Matriz.Muestras.pob1.conMean <- cbind (Matriz.Muestras.pob1.sinMean, meansX)
+
+Matriz.Muestras.pob1.conMean
+
+# Histograma de las medias
+
+par (mfrow = c (2,2))
+hist (Matriz.Muestras.pob1.sinMean [1,], main = 'muestra 1')
+hist (Matriz.Muestras.pob1.sinMean [2,], main = 'muestra 2')
+hist (Matriz.Muestras.pob1.sinMean [3,], main = 'muestra 3')
+hist (Matriz.Muestras.pob1.conMean [, taman.muestra + 1], main = 'medias')
+
+# * Ejercicio: * Aumente la SD = 10 y disminuyó el número de individuos de la población, ejemplo 1000. 
+
+# ¿Cuánto es el mínimo de muestras a tomar, para que los medios obtengan se acerque a los medios de la población?
+
+simula <-abs (rnorm (1000,10,10))
+
+tormenta
+
+cabeza (simula)
+
+# Medios poblacionales reales
+
+Xpob <- mean (simula)
+
+Xpob
+
+# Número de muestras
+muestreo <- c (3,5,10,15,20,25,30,50,60,100,200,700,1000)
+
+significa <-NULL
+para (i en 1: longitud (muestreo)) {
+  muestra <-muestra (simula, muestreo [i], replace = F)
+  significa <-c (significa, mean (muestra))
+}
+
+plot (cbind (muestreo, significa), tipo = "l")
+abline (h = Xpob, col = "blue")
