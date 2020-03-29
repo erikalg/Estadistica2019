@@ -1,0 +1,227 @@
+######## Comportamiento gráfico de las variables
+
+#### Exploración normalidad
+
+### Ambiental 
+ggplot (datos = ambientales, aes (x = Ambiental)) +
+  geom_histogram (aes (y = ..density .., fill = ..count ..)) +
+  scale_fill_gradient (bajo = "#DCDCDC", alto = "# 7C7C7C") +
+  stat_function (fun = dnorm, color = "firebrick",
+                args = list (mean = mean (ambientales $ Ambiental),
+                            sd = sd (ambientales $ Ambiental))) +
+  ggtitle ("Histograma BL + curva normal teórica") +
+  theme_bw ()
+
+#### Agua
+ggplot (datos = ambientales, aes (x = Agua)) +
+  geom_histogram (aes (y = ..density .., fill = ..count ..)) +
+  scale_fill_gradient (bajo = "#DCDCDC", alto = "# 7C7C7C") +
+  stat_function (fun = dnorm, color = "firebrick",
+                args = list (mean = mean (ambientales $ Agua),
+                            sd = sd (ambientales $ Agua))) +
+  ggtitle ("Histograma BL + curva normal teórica") +
+  theme_bw ()
+
+### Caudal 
+ggplot (datos = ambientales, aes (x = Caudal)) +
+  geom_histogram (aes (y = ..density .., fill = ..count ..)) +
+  scale_fill_gradient (bajo = "#DCDCDC", alto = "# 7C7C7C") +
+  stat_function (fun = dnorm, color = "firebrick",
+                args = list (mean = mean (ambientales $ Caudal),
+                            sd = sd (ambientales $ Caudal))) +
+  ggtitle ("Histograma BL + curva normal teórica") +
+  theme_bw ()
+
+########## Relación entre variables vs zonas dada temporada
+### Ambiental
+ggplot (datos = ambientales, aes (x = Zona, y = Ambiental, color = Temporada)) +
+  geom_boxplot () +
+ theme_bw () +
+  tema (legend.position = "none")
+
+### Agua
+ggplot (datos = ambientales, aes (x = Zona, y = Agua, color = Temporada)) +
+  geom_boxplot () +
+  geom_point () +
+  theme_bw () +
+  tema (legend.position = "none")
+
+### Caudal
+ggplot (datos = ambientales, aes (x = Zona, y = Caudal, color = Temporada)) +
+  geom_boxplot () +
+  geom_point () +
+  theme_bw () +
+  tema (legend.position = "none")
+
+######## Relación entre diversidad 
+ggplot (datos = ambientales, aes (x = Zona, y = transShannon, fill = Temporada)) +
+  geom_boxplot () +
+   theme_bw () + 
+  theme (legend.position = "bottom") + ylab ("H '") + xlab ("Estación")
+
+ggplot (datos = ambientales, aes (x = Zona, y = transDominancia, fill = Temporada)) +
+  geom_boxplot () +
+  theme_bw () + 
+  theme (legend.position = "bottom") + ylab ("D") + xlab ("Estación")    
+        
+##### Evaluando la normalidad 
+
+### Qqplot
+ggplot (ambientales, aes (muestra = Ambiental, color = Zona)) +
+  stat_qq () +
+  stat_qq_line ()
+ggplot (ambientales, aes (muestra = Agua, color = Zona)) +
+  stat_qq () +
+  stat_qq_line ()
+ggplot (ambientales, aes (muestra = Caudal, color = Zona)) +
+  stat_qq () +
+  stat_qq_line ()
+
+### Shapiro 
+
+shapiro.test (x = ambientales $ Ambiental) ### Acepta Ho, Normal
+shapiro.test (x = ambientales $ Agua) #### Acepta Ho, Normal
+shapiro.test (x = ambientales $ Caudal) #### Rechaza Ho, Anormal
+
+##### Evaluando Homocedasticidad
+
+leveneTest (ambientales $ Ambiental ~ ambientales $ Zona) #### Acepta Ho. Homogenea
+leveneTest (ambientales $ Agua ~ ambientales $ Zona) #### Acepta Ho. Homogenea
+leveneTest (ambientales $ Caudal ~ ambientales $ Zona) #### Acepta Ho. Homogenea
+
+#### Se puede realizar ANOVA para ver diferencias 
+
+### Se realiza transformación para eliminar valores atípicos y normalizar Caudal
+T_tuk = transformTukey (ambientales $ Agua)
+lambda <-0.375
+transagua <-ambientales $ Agua ^ lambda
+
+T_tuk = transformTukey (ambientales $ Ambiental)
+lambda <-0.1
+transambiental <-ambientales $ Ambiental ^ lambda
+
+T_tuk = transformTukey (ambientales $ Caudal)
+lambda <- (- 0.6)
+transcaudal <- (- 1 * ambientales $ Ambiental ^ lambda)
+
+#### Descriptotes de los bióticos
+
+sppII <-read.csv ("Matriz inext por temporal.csv", header = T, row.names = NULL) [, -1: -2]
+
+### Número de colina en diversidad
+
+colina <-iNEXT (sppII, q = c (0,1,2), tipo de datos = "abundancia", tamaño = NULL, punto final = NULL, nudos = 40, se = VERDADERO, conf = 0.95, nboot = 50)
+colina
+a <- ggiNEXT (hill, type = 1, facet.var = "order", color.var = "site") + 
+  theme_bw () + theme (legend.position = "bottom") + ggtitle ("Números de Hill")  
+a ### Diversidad
+b <- ggiNEXT (hill, type = 2, facet.var = "order", color.var = "site") + 
+  theme_bw () + theme (legend.position = "bottom") + ggtitle ("Curva de acumulación") 
+b ### Acumulación
+c <-ggiNEXT (hill, type = 3, facet.var = "order", color.var = "site") + 
+  theme_bw () + theme (legend.position = "bottom") + ggtitle ("Curva basada en la cobertura 95%")  
+c ### Cobertura
+
+########### Descriptivos y normalidad de bióticos 
+
+resuma (.data = group_by (ambientales, Zona),
+          cuenta = n (),
+          mean = mean (Shannon, na.rm = TRUE),
+          sd = sd (Shannon, na.rm = VERDADERO)
+)
+
+resuma (.data = group_by (ambientales, Zona),
+          cuenta = n (),
+          mean = mean (Dominancia, na.rm = TRUE),
+          sd = sd (Dominancia, na.rm = VERDADERO)
+)
+
+ggplot (ambientales, aes (muestra = Shannon, color = Zona)) +
+  stat_qq () +
+  stat_qq_line ()
+ggplot (ambientales, aes (muestra = Dominancia, color = Zona)) +
+  stat_qq () +
+  stat_qq_line ()
+
+#### Shapiro
+shapiro.test (x = ambientales $ Shannon) ### Acepta Ho, Normal
+shapiro.test (x = ambientales $ Dominancia) #### No acepta ho, anormal. 
+
+### Transformaciones 
+
+T_tuk = transformTukey (ambientales $ Shannon)
+lambda <-1.55
+transShannon <-ambientales $ Shannon ^ lambda
+
+T_tuk = transformTukey (ambientales $ Dominancia)
+lambda <- (- 0.975)
+transDominancia <- (- 1 * ambientales $ Dominancia ^ lambda)
+
+####### Leven 
+leveneTest (ambientales $ Shannon ~ ambientales $ Zona) #### Acepta Ho. Homogenea
+leveneTest (ambientales $ Dominancia ~ ambientales $ Zona) #### Acepta 
+
+
+##### Análisis
+
+### ANOVA entre zonas dadas la temporada para ver si son diferentes 
+
+## Agua
+aovIn <- aov (transagua ~ ambientales $ Zona * ambientales $ Temporada, data = ambientales)
+resumen (aovIn)
+TukeyHSD (aovIn) 
+## Ambiental
+aovIn <- aov (transambiental ~ ambientales $ Zona * ambientales $ Temporada, data = ambientales)
+resumen (aovIn)
+TukeyHSD (aovIn) 
+### Caudal 
+aovIn <- aov (transcaudal ~ ambientales $ Zona * ambiental $ Temporada, data = ambientales)
+resumen (aovIn)
+TukeyHSD (aovIn) 
+
+
+#### Anova entre números y zonas dada la temporada
+### Shannon
+aovIn <- aov (transShannon ~ ambientales $ Zona * ambiental $ Temporada, data = ambientales)
+resumen (aovIn)
+TukeyHSD (aovIn)
+### Dominancia 
+aovIn <- aov (transDominancia ~ ambientales $ Zona * ambiental $ Temporada, data = ambientales)
+resumen (aovIn)
+TukeyHSD (aovIn)
+
+### correlación entre números y zona 
+
+#### Shannon 
+ggplot (ambientales, aes (muestra = Shannon)) +
+  stat_qq () + stat_qq_line ()
+
+### Dominan
+ggplot (ambientales, aes (muestra = Dominancia)) +
+  stat_qq () + stat_qq_line ()
+
+########################## Correlación entre Shannon y D y temperatura del agua 
+
+#### Pearson
+
+cor.test (y = transShannon, x = ambientales $ Agua, 
+         método = "pearson")
+
+cor.test (y = transDominancia, x = ambiental $ Agua, 
+         método = "pearson")
+
+#### lineal
+
+CorS <-cor (x = ambientales $ Agua, y = transShannon, method = "spearman")
+CorS
+CorSS <-cor.test (x = ambientales $ Agua, y = transShannon, conf.level = 0.95, method = "spearman")
+CorsD <-cor (x = ambientales $ Agua, y = transDominancia, method = "spearman")
+CorsD
+
+######### Gráficos 
+CSH <-ggplot (ambientales, aes (x = ambientales $ Agua, y = transShannon)) + geom_point (shape = 1) +   
+  geom_smooth (método = lm) + ylab ("H '") + xlab ("Temperatura del agua (° C)")
+CSH
+CSD <-ggplot (ambientales, aes (x = ambientales $ Agua, y = transDominancia)) + geom_point (shape = 1) +   
+  geom_smooth (método = lm) + ylab ("D") + xlab ("Temperatura del agua (° C)")
+CSD
